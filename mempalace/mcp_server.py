@@ -292,10 +292,10 @@ def tool_add_drawer(
             "matches": dup["matches"],
         }
 
-    drawer_id = f"drawer_{wing}_{room}_{hashlib.md5((content[:100] + datetime.now().isoformat()).encode()).hexdigest()[:16]}"
+    drawer_id = f"drawer_{wing}_{room}_{hashlib.md5(content.encode()).hexdigest()[:16]}"
 
     try:
-        col.add(
+        col.upsert(
             ids=[drawer_id],
             documents=[content],
             metadatas=[

@@ -417,7 +417,7 @@ def add_drawer(
     """Add one drawer to the palace."""
     drawer_id = f"drawer_{wing}_{room}_{hashlib.md5((source_file + str(chunk_index)).encode(), usedforsecurity=False).hexdigest()[:16]}"
     try:
-        collection.add(
+        collection.upsert(
             documents=[content],
             ids=[drawer_id],
             metadatas=[
@@ -432,9 +432,7 @@ def add_drawer(
             ],
         )
         return True
-    except Exception as e:
-        if "already exists" in str(e).lower() or "duplicate" in str(e).lower():
-            return False
+    except Exception:
         raise
 
 
