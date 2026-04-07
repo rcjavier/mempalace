@@ -44,7 +44,6 @@ COMMON_ENGLISH_WORDS = {
     "chance",
     "chase",
     "hunter",
-    "hunter",
     "dash",
     "flash",
     "star",
@@ -78,8 +77,6 @@ COMMON_ENGLISH_WORDS = {
     "january",
     "february",
     "march",
-    "april",
-    "june",
     "july",
     "august",
     "september",
@@ -597,7 +594,6 @@ class EntityRegistry:
         Returns list of canonical names found.
         """
         found = []
-        query.lower()
 
         for canonical, info in self.people.items():
             names_to_check = [canonical] + info.get("aliases", [])
