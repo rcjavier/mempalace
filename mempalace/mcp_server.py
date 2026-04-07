@@ -407,6 +407,7 @@ def tool_diary_read(agent_name: str, last_n: int = 10):
         results = col.get(
             where={"$and": [{"wing": wing}, {"room": "diary"}]},
             include=["documents", "metadatas"],
+            limit=10000,
         )
 
         if not results["ids"]:
