@@ -743,9 +743,13 @@ def handle_request(request):
                 "id": req_id,
                 "result": {"content": [{"type": "text", "text": json.dumps(result, indent=2)}]},
             }
-        except Exception as e:
-            logger.error(f"Tool error in {tool_name}: {e}")
-            return {"jsonrpc": "2.0", "id": req_id, "error": {"code": -32000, "message": "Internal tool error"}}
+        except Exception:
+            logger.exception(f"Tool error in {tool_name}")
+            return {
+                "jsonrpc": "2.0",
+                "id": req_id,
+                "error": {"code": -32000, "message": "Internal tool error"},
+            }
 
     return {
         "jsonrpc": "2.0",
