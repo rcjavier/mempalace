@@ -2,7 +2,7 @@
 """
 MemPalace MCP Server — read/write palace access for Claude Code
 ================================================================
-Install: claude mcp add mempalace -- python /path/to/mcp_server.py
+Install: claude mcp add mempalace -- python -m mempalace.mcp_server
 
 Tools (read):
   mempalace_status          — total drawers, wing/room breakdown
