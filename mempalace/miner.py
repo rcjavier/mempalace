@@ -460,7 +460,7 @@ def process_file(
 
     try:
         content = filepath.read_text(encoding="utf-8", errors="replace")
-    except Exception:
+    except OSError:
         return 0
 
     content = content.strip()

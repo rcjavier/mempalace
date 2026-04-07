@@ -27,7 +27,7 @@ def normalize(filepath: str) -> str:
     try:
         with open(filepath, "r", encoding="utf-8", errors="replace") as f:
             content = f.read()
-    except Exception as e:
+    except OSError as e:
         raise IOError(f"Could not read {filepath}: {e}")
 
     if not content.strip():
@@ -235,7 +235,7 @@ def _messages_to_transcript(messages: list, spellcheck: bool = True) -> str:
             from mempalace.spellcheck import spellcheck_user_text
 
             _fix = spellcheck_user_text
-        except Exception:
+        except ImportError:
             _fix = None
     else:
         _fix = None

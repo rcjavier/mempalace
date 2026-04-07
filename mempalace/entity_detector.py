@@ -660,7 +660,7 @@ def detect_entities(file_paths: list, max_files: int = 10) -> dict:
             all_text.append(content)
             all_lines.extend(content.splitlines())
             files_read += 1
-        except Exception:
+        except OSError:
             continue
 
     combined_text = "\n".join(all_text)

@@ -305,7 +305,7 @@ def mine_convos(
         # Normalize format
         try:
             content = normalize(str(filepath))
-        except Exception:
+        except (OSError, ValueError):
             continue
 
         if not content or len(content.strip()) < MIN_CHUNK_SIZE:
