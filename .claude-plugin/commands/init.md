@@ -3,4 +3,4 @@ description: Set up MemPalace — install the package, initialize a palace, conf
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 ---
 
-Invoke the mempalace skill (using the Skill tool) with the `init` command, then follow its instructions.
+Invoke the generic mempalace skill (using the Skill tool) with the `init` command, then follow its instructions.

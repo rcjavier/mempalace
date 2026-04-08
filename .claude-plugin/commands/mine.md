@@ -4,4 +4,4 @@ argument-hint: Path to project or conversation export to mine.
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 ---
 
-Invoke the mempalace skill (using the Skill tool) with the `mine` command, then follow its instructions.
+Invoke the generic mempalace skill (using the Skill tool) with the `mine` command, then follow its instructions.

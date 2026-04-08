@@ -4,4 +4,4 @@ argument-hint: Search query, optionally with wing/room filters.
 allowed-tools: Bash, Read
 ---
 
-Invoke the mempalace skill (using the Skill tool) with the `search` command, then follow its instructions.
+Invoke the generic mempalace skill (using the Skill tool) with the `search` command, then follow its instructions.

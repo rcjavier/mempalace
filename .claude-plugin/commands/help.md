@@ -3,4 +3,4 @@ description: Show comprehensive MemPalace help — available skills, MCP tools, 
 allowed-tools: Bash, Read
 ---
 
-Invoke the mempalace skill (using the Skill tool) with the `help` command, then follow its instructions.
+Invoke the generic mempalace skill (using the Skill tool) with the `help` command, then follow its instructions.
