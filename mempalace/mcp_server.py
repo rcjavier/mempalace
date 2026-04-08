@@ -44,7 +44,8 @@ def _parse_args():
         metavar="PATH",
         help="Path to the palace directory (overrides config file and env var)",
     )
-    return parser.parse_args()
+    args, _ = parser.parse_known_args()
+    return args
 
 
 _args = _parse_args()
@@ -283,19 +284,18 @@ def tool_add_drawer(
     if not col:
         return _no_palace()
 
-    # Duplicate check
-    dup = tool_check_duplicate(content, threshold=0.9)
-    if dup.get("is_duplicate"):
-        return {
-            "success": False,
-            "reason": "duplicate",
-            "matches": dup["matches"],
-        }
+    drawer_id = f"drawer_{wing}_{room}_{hashlib.md5(content.encode()).hexdigest()[:16]}"
 
-    drawer_id = f"drawer_{wing}_{room}_{hashlib.md5((content[:100] + datetime.now().isoformat()).encode()).hexdigest()[:16]}"
+    # Idempotency: if the deterministic ID already exists, return success as a no-op.
+    try:
+        existing = col.get(ids=[drawer_id])
+        if existing and existing["ids"]:
+            return {"success": True, "reason": "already_exists", "drawer_id": drawer_id}
+    except Exception:
+        pass
 
     try:
-        col.add(
+        col.upsert(
             ids=[drawer_id],
             documents=[content],
             metadatas=[
