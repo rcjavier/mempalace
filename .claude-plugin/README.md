@@ -43,8 +43,10 @@ After installing the plugin, run the init command to complete setup (pip install
 
 MemPalace registers two hooks that run automatically:
 
-- **Stop** -- Saves conversation context when a session ends.
+- **Stop** -- Saves conversation context every 15 messages.
 - **PreCompact** -- Preserves important memories before context compaction.
+
+Set the `MEMPAL_DIR` environment variable to a directory path to automatically run `mempalace mine` on that directory during each save trigger.
 
 ## MCP Server
 
