@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "./hooks/mempal-session-start-hook.sh"
+            "command": "${CODEX_PLUGIN_ROOT}/hooks/mempal-hook.sh session-start"
           }
         ]
       }
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "./hooks/mempal-stop-hook.sh"
+            "command": "${CODEX_PLUGIN_ROOT}/hooks/mempal-hook.sh stop"
           }
         ]
       }
@@ -28,7 +28,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "./hooks/mempal-precompact-hook.sh"
+            "command": "${CODEX_PLUGIN_ROOT}/hooks/mempal-hook.sh precompact"
           }
         ]
       }

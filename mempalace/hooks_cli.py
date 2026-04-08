@@ -53,8 +53,15 @@ def _count_human_messages(transcript_path: str) -> int:
                     msg = entry.get("message", {})
                     if isinstance(msg, dict) and msg.get("role") == "user":
                         content = msg.get("content", "")
-                        if isinstance(content, str) and "<command-message>" in content:
-                            continue
+                        if isinstance(content, str):
+                            if "<command-message>" in content:
+                                continue
+                        elif isinstance(content, list):
+                            text = " ".join(
+                                b.get("text", "") for b in content if isinstance(b, dict)
+                            )
+                            if "<command-message>" in text:
+                                continue
                         count += 1
                 except (json.JSONDecodeError, AttributeError):
                     pass
@@ -96,35 +103,19 @@ def _maybe_auto_ingest():
             pass
 
 
-def _parse_claude_code_input(data: dict) -> dict:
-    """Parse stdin JSON for the claude-code harness."""
-    return {
-        "session_id": _sanitize_session_id(str(data.get("session_id", "unknown"))),
-        "stop_hook_active": data.get("stop_hook_active", False),
-        "transcript_path": str(data.get("transcript_path", "")),
-    }
-
-
-def _parse_codex_input(data: dict) -> dict:
-    """Parse stdin JSON for the codex harness."""
-    return {
-        "session_id": _sanitize_session_id(str(data.get("session_id", "unknown"))),
-        "stop_hook_active": data.get("stop_hook_active", False),
-        "transcript_path": str(data.get("transcript_path", "")),
-    }
+SUPPORTED_HARNESSES = {"claude-code", "codex"}
 
 
 def _parse_harness_input(data: dict, harness: str) -> dict:
     """Parse stdin JSON according to the harness type."""
-    parsers = {
-        "claude-code": _parse_claude_code_input,
-        "codex": _parse_codex_input,
-    }
-    parser = parsers.get(harness)
-    if parser is None:
+    if harness not in SUPPORTED_HARNESSES:
         print(f"Unknown harness: {harness}", file=sys.stderr)
         sys.exit(1)
-    return parser(data)
+    return {
+        "session_id": _sanitize_session_id(str(data.get("session_id", "unknown"))),
+        "stop_hook_active": data.get("stop_hook_active", False),
+        "transcript_path": str(data.get("transcript_path", "")),
+    }
 
 
 def hook_stop(data: dict, harness: str):
@@ -135,7 +126,7 @@ def hook_stop(data: dict, harness: str):
     transcript_path = parsed["transcript_path"]
 
     # If already in a save cycle, let through (infinite-loop prevention)
-    if stop_hook_active in (True, "True", "true"):
+    if str(stop_hook_active).lower() in ("true", "1", "yes"):
         _output({})
         return
 
@@ -204,6 +195,7 @@ def hook_precompact(data: dict, harness: str):
                     [sys.executable, "-m", "mempalace", "mine", mempal_dir],
                     stdout=log_f,
                     stderr=log_f,
+                    timeout=60,
                 )
         except OSError:
             pass
@@ -217,6 +209,7 @@ def run_hook(hook_name: str, harness: str):
     try:
         data = json.load(sys.stdin)
     except (json.JSONDecodeError, EOFError):
+        _log("WARNING: Failed to parse stdin JSON, proceeding with empty data")
         data = {}
 
     hooks = {
