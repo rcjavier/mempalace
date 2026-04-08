@@ -6,7 +6,6 @@ timeline, stats, and edge cases (duplicate triples, ID collisions).
 """
 
 
-
 class TestEntityOperations:
     def test_add_entity(self, kg):
         eid = kg.add_entity("Alice", entity_type="person")
@@ -124,6 +123,7 @@ class TestWALMode:
         mode = conn.execute("PRAGMA journal_mode").fetchone()[0]
         conn.close()
         assert mode == "wal"
+
 
 class TestStats:
     def test_stats_empty(self, kg):
