@@ -1,37 +1,43 @@
-name: Sync Plugin Version
+name: Bump Version
 
 on:
   push:
     branches: [main]
 
 jobs:
-  sync-version:
+  bump-version:
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v6
 
-      - name: Extract version from version.py
-        id: version
+      - name: Bump patch version
         run: |
-          VERSION=$(python3 -c "exec(open('mempalace/version.py').read()); print(__version__)")
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          CURRENT=$(python3 -c "exec(open('mempalace/version.py').read()); print(__version__)")
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
+          PATCH=$((PATCH + 1))
+          NEW="${MAJOR}.${MINOR}.${PATCH}"
+          echo "__version__ = \"${NEW}\"" > mempalace/version.py
+          # Prepend docstring
+          sed -i '1i"""Single source of truth for the MemPalace package version."""\n' mempalace/version.py
+          echo "version=$NEW" >> "$GITHUB_OUTPUT"
+        id: version
 
-      - name: Update plugin.json
+      - name: Sync plugin.json
         run: |
           jq --arg v "${{ steps.version.outputs.version }}" '.version = $v' .claude-plugin/plugin.json > tmp.json && mv tmp.json .claude-plugin/plugin.json
 
-      - name: Update marketplace.json
+      - name: Sync marketplace.json
         run: |
           jq --arg v "${{ steps.version.outputs.version }}" '.plugins[0].version = $v' .claude-plugin/marketplace.json > tmp.json && mv tmp.json .claude-plugin/marketplace.json
 
-      - name: Commit if changed
+      - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add .claude-plugin/plugin.json .claude-plugin/marketplace.json
+          git add mempalace/version.py .claude-plugin/plugin.json .claude-plugin/marketplace.json
           if ! git diff --staged --quiet; then
-            git commit -m "chore: sync plugin version to ${{ steps.version.outputs.version }}"
+            git commit -m "chore: bump version to ${{ steps.version.outputs.version }}"
             git push
           fi
